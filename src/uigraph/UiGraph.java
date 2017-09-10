@@ -6,38 +6,43 @@ package uigraph;
 
 import java.util.ArrayList;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
+import handleEvents.HandlerMouseEvents;
 
 /**
  *
  * @author fc.corporation
  */
 public class UiGraph extends Application {
+    private Circle stationall;
     private final Group GROUPSTATION;
     private final Group GROUPSTREET;
     private final Group GROUPSTATIONBUS;
     private final Group GROUPSTATIONTRAIN;
     private final int RADIUS = 4; //raio do circulo que representa a estação
-    private final int LENGTHSTATION_AXIS_Y = 50; //distancia entre as estações no eixo y
-    private static final int QUANTIINLINE = 20; // quantidade de estações na mesma linha
-    private static final int QUANTSTATION = 200; // quantidade de estações no total
-    private final Maps maps;
+    private static int QUANTIINLINE; // quantidade de estações na mesma linha
+    private static int QUANTSTATION; // quantidade de estações no total
+    private Maps maps;
+    private HandlerMouseEvents handlerMouseEvents;
+    private final Color[] standartColorsOfStation;
     
     /**
      * O construtor da classe não recebe nenhum argumento e instancia os objetos
      * e seta o mapa de acordo com as constantes.
      */
     public UiGraph(){
+        this.standartColorsOfStation = new Color[]{Color.BLUE, Color.BLACK, Color.GREEN};
         this.GROUPSTATION = new Group();
         this.GROUPSTREET = new Group();
         this.GROUPSTATIONBUS = new Group();
         this.GROUPSTATIONTRAIN = new Group();
-        this.maps = new Maps(UiGraph.QUANTSTATION, UiGraph.QUANTIINLINE);
     }
     /**
      * O método createStation cria os Nodes que são circulos que representam as 
@@ -48,19 +53,24 @@ public class UiGraph extends Application {
      * @param quantInLine quantidade de estações na mesma linha
      */
     public void createStation(int quant, int distancia, int quantInLine){
-        Circle tempCircle;
+        UiGraph.QUANTIINLINE = quantInLine;
+        UiGraph.QUANTSTATION = quant;
+        this.maps = new Maps(UiGraph.QUANTSTATION, UiGraph.QUANTIINLINE);
         int j = 1;
         int x = distancia;
-        int y = LENGTHSTATION_AXIS_Y;
+        int y = distancia;
         for(int i=0;i < quant;i++){
-            tempCircle = new Circle(RADIUS);
-            tempCircle.setTranslateX(x);
-            tempCircle.setTranslateY(y);
+            this.stationall = new Circle(RADIUS);
+            this.stationall.setTranslateX(x);
+            this.stationall.setTranslateY(y);
+            this.stationall.setOnMouseClicked(new HandlerMouseEvents(
+                    distancia, distancia, this.GROUPSTATION, quantInLine,
+                    this.standartColorsOfStation, UiGraph.QUANTSTATION, this.RADIUS, this.maps));
             this.createStreets(i, x, y, distancia);
             x += distancia;
-            this.GROUPSTATION.getChildren().add(tempCircle);
+            this.GROUPSTATION.getChildren().add(this.stationall);
             if(i == (quantInLine*j)-1){
-                y+= LENGTHSTATION_AXIS_Y;
+                y+= distancia;
                 x=distancia;
                 j++;
             }
@@ -157,6 +167,7 @@ public class UiGraph extends Application {
         Group allGroup = new Group();
         this.createstationBusTaxi();
         this.createStationTrain();
+        //allGroup.getChildren().add(this.GROUPSTATION);
         allGroup.getChildren().addAll(this.GROUPSTATION,this.GROUPSTREET, 
                 this.GROUPSTATIONBUS, this.GROUPSTATIONTRAIN);
         Scene scene = new Scene(allGroup);

@@ -17,7 +17,7 @@ public class Maps {
     private ArrayList<ArrayList<Integer>> pathTrainstation;
     private final Random WEIGHT;
     private final Random COORD;
-    private static final int[] LIMITEEDGE = {1,200};
+    private final int[] LIMITEEDGE;
     private static final int LIMITEWEIGHT = 9;
     private final int SIZE;
     private final int quantInLine;
@@ -30,6 +30,7 @@ public class Maps {
      * @param quantInLine quantidade de nós da mesma linha
      */
     public Maps(int tamanho, int quantInLine){
+        this.LIMITEEDGE = new int[]{1,tamanho};
         this.iterador = 1;
         this.quantInLine = quantInLine;
         this.adjacenciesMatrix = new int[tamanho][tamanho];
@@ -88,7 +89,7 @@ public class Maps {
             return point;
         }
         else{
-            if(vertce < Maps.LIMITEEDGE[1]-quantInLine)
+            if(vertce < this.LIMITEEDGE[1]-quantInLine)
                 switch(quali){
                     case CASE0: point[0] = vertce+1; break;
                     case CASE1: point[0] = quantInLine+vertce; break;
@@ -291,7 +292,7 @@ public class Maps {
      */
     public int[] possibleEges(int vertce){
         int[] edges = new int[2];
-        if(vertce < Maps.LIMITEEDGE[1]-this.quantInLine){
+        if(vertce < this.LIMITEEDGE[1]-this.quantInLine){
             edges[0] = vertce+1;
             edges[1] = this.quantInLine+vertce;
         }
@@ -308,9 +309,12 @@ public class Maps {
      * @return retorna true se existir uma ligação, caso contrário retorna false
      */
     public boolean thereEdge(int vertcePartida, int vertceDestino){
+        return this.thereEdge(vertcePartida, vertceDestino, this.adjacenciesMatrix);
+    }
+    public boolean thereEdge(int vertcePartida, int vertceDestino, int[][] adjacenciesMatrix){
         boolean state = false;
         try{
-        if(this.adjacenciesMatrix[vertcePartida][vertceDestino] != 0)
+        if(adjacenciesMatrix[vertcePartida][vertceDestino] != 0)
             state = true;
         }catch(IndexOutOfBoundsException ioe){}
         return state;
@@ -362,5 +366,39 @@ public class Maps {
             }
         }
         return edges;
+    }
+    public int incideArestaInStationBusOrTrain(int vertice){
+        int result = 0; //resultado 0 indica que não há ligação em nemhuma das matrizes
+        for(int i=0;i < this.SIZE;i++){
+            if(this.stationTrainBus[vertice][i] != 0 || this.stationTrainBus[i][vertice] != 0){
+                result = 1; //resultado 1 indica que há ligação na estação de trem
+                return result;
+            }
+            else if(this.stationBusTaxi[vertice][i] != 0 || this.stationBusTaxi[i][vertice] != 0){
+                result = 2; //resultado 2 indica que há ligação na estação de ônibus
+            }
+        }
+        return result;
+    }
+    public boolean movimentation(int verticePartida, int verticeChegada){
+        boolean state = false;
+        if(this.genericMovimentation(verticePartida, verticeChegada, this.adjacenciesMatrix)){
+            state = true;
+        }
+        else if(this.genericMovimentation(verticePartida, verticeChegada, this.stationTrainBus)){
+            state = true;
+        }
+        else if (this.genericMovimentation(verticePartida, verticeChegada, this.stationBusTaxi)){
+            state = true;
+        }
+        return state;
+    }
+    public boolean genericMovimentation(int verticePartida, int verticeChegada, int[][] adjacencieMatriz){
+        boolean state = false;
+        if(verticePartida < verticeChegada)
+            state = this.thereEdge(verticePartida, verticeChegada, adjacencieMatriz);
+        else
+            state = this.thereEdge(verticeChegada, verticePartida, adjacencieMatriz);
+        return state;
     }
 }
