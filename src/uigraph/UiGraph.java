@@ -163,7 +163,7 @@ public class UiGraph extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        this.createStation(200, 50, 20);
+        this.createStation(200, 70, 20);
         Group allGroup = new Group();
         this.createstationBusTaxi();
         this.createStationTrain();
