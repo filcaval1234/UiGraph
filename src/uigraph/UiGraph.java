@@ -26,7 +26,7 @@ public class UiGraph extends Application {
     private final Group GROUPSTREET;
     private final Group GROUPSTATIONBUS;
     private final Group GROUPSTATIONTRAIN;
-    private final int RADIUS = 4; //raio do circulo que representa a estação
+    private final int RADIUS = 5; //raio do circulo que representa a estação
     private static int QUANTIINLINE; // quantidade de estações na mesma linha
     private static int QUANTSTATION; // quantidade de estações no total
     private Maps maps;
@@ -89,13 +89,15 @@ public class UiGraph extends Application {
         final Color color = Color.RED;
         int[] vertces = this.maps.possibleEges(vertce);
             if(this.maps.thereEdge(vertce, vertces[0])){
-                tempLine = new Line(starts_x, starts_Y, starts_x+distance, starts_Y);
+                tempLine = new Line(starts_x+this.RADIUS, starts_Y, starts_x+distance-this.RADIUS, starts_Y);
                 tempLine.setStroke(color);
+                tempLine.setMouseTransparent(true);
                 this.GROUPSTREET.getChildren().add(tempLine);
             }
             if(this.maps.thereEdge(vertce, vertces[1])){
-                tempLine = new Line(starts_x, starts_Y, starts_x, starts_Y + distance);
+                tempLine = new Line(starts_x, starts_Y+this.RADIUS, starts_x, starts_Y + distance-this.RADIUS);
                 tempLine.setStroke(color);
+                tempLine.setMouseTransparent(true);
                 this.GROUPSTREET.getChildren().add(tempLine);
             }
     }
@@ -150,6 +152,7 @@ public class UiGraph extends Application {
                     line = new Line(xCoordFrom+increment, yCoordFrom+increment,
                             xCoordDestiny+increment, yCoordDestiny+increment);
                     line.setStroke(genericColor);
+                    line.setMouseTransparent(true);
                     genericGroup.getChildren().add(line);
                     iterador++;
                 }
