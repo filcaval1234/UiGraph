@@ -6,15 +6,14 @@ package uigraph;
 
 import java.util.ArrayList;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import handleEvents.HandlerMouseEvents;
+import javafx.scene.shape.Polyline;
 
 /**
  *
@@ -107,7 +106,8 @@ public class UiGraph extends Application {
      */
     public void createstationBusTaxi(){
         final int distanceBetweenStreets = 3;
-        this.genericCreateStation(this.GROUPSTATIONBUS, true, Color.BLUE, distanceBetweenStreets);
+        final double addY = this.RADIUS+3;
+        this.genericCreateStation(this.GROUPSTATIONBUS, true, Color.BLUE, distanceBetweenStreets, -addY);
     }
     /**
      * O método createStationTrain cria as estações de trem chamando o método 
@@ -115,7 +115,8 @@ public class UiGraph extends Application {
      */
     public void createStationTrain(){
         final int distanceBetweenStreets = -3;
-        this.genericCreateStation(this.GROUPSTATIONTRAIN, false, Color.GREEN, distanceBetweenStreets);
+        final double addY = this.RADIUS+3;
+        this.genericCreateStation(this.GROUPSTATIONTRAIN, false, Color.GREEN, distanceBetweenStreets, addY);
     }
     /**
      * O método genericCreateStation cria as estações de ônibus ou trem de acordo
@@ -129,10 +130,11 @@ public class UiGraph extends Application {
      * não fiquem sobrepostas
      */
     public void genericCreateStation(Group genericGroup, boolean busTrainSelector,
-            Color genericColor, int increment){
+            Color genericColor, int increment, double addY){
         Circle tempNodeDestiny, tempNodeFrom;
         ArrayList<Integer> edges;
-        Line line;
+        Polyline line;
+        final double addX = 5;
         for(int i=0;i < UiGraph.QUANTSTATION;i++){
             edges = maps.returnEdge(i, busTrainSelector);
             if(edges.isEmpty()){
@@ -149,10 +151,12 @@ public class UiGraph extends Application {
                     double yCoordDestiny = tempNodeDestiny.getTranslateY();
                     double xCoordFrom = tempNodeFrom.getTranslateX();
                     double yCoordFrom = tempNodeFrom.getTranslateY();
-                    line = new Line(xCoordFrom+increment, yCoordFrom+increment,
-                            xCoordDestiny+increment, yCoordDestiny+increment);
-                    line.setStroke(genericColor);
+                    
+                    line = new Polyline(new double[]{xCoordFrom, yCoordFrom,
+                        xCoordFrom+addX,yCoordFrom-addY, xCoordDestiny-addX, yCoordDestiny-addY,
+                        xCoordDestiny, yCoordDestiny});
                     line.setMouseTransparent(true);
+                    line.setStroke(genericColor);
                     genericGroup.getChildren().add(line);
                     iterador++;
                 }
