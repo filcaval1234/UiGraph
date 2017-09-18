@@ -8,7 +8,14 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="UiGraph.jar" size="11048" download="eager" />
+    <jar href="UiGraph.jar" size="14788" download="eager" />
+    <jar href="lib\gson-2.6.2.jar" size="229650" download="eager" />
+    <jar href="lib\javax.faces-2.3.2.jar" size="3575035" download="eager" />
+    <jar href="lib\javax.ws.rs-api-2.0.jar" size="112758" download="eager" />
+    <jar href="lib\jersey-client-1.19.jar" size="134021" download="eager" />
+    <jar href="lib\jersey-client-2.26.jar" size="181496" download="eager" />
+    <jar href="lib\jersey-common-2.0-m03.jar" size="498917" download="eager" />
+    <jar href="lib\jersey-core-1.19.4.jar" size="436731" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="UiGraph" >
     <param name="requiredFXVersion" value="8.0+"/>

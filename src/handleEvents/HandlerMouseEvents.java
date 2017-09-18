@@ -6,6 +6,8 @@
 package handleEvents;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -25,6 +27,9 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
     private final Maps maps;
     private static int lastStation;
     private static int iterador = 0;
+    private static int[] jogadas;
+    private Label textLabel;
+    private static Alert alertNoTickets;
     
     /**
      * O contrutor da classe que recebe argumentos necessarios para inicializar
@@ -39,7 +44,7 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
      * @param maps referencia ao mapa que foi criado em UiGraph
      */
     public HandlerMouseEvents(int lengthX, int lengthY, Group tempGroup, int lenLine,
-            Color[] colorsOfStations, int lenGroup, int standartRadius, Maps maps){
+            Color[] colorsOfStations, int lenGroup, int standartRadius, Maps maps, Label label){
         this.tempGroup = tempGroup;
         this.lengthX = lengthX;
         this.lengthY = lengthY;
@@ -48,6 +53,9 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
         this.lenGroup = lenGroup;
         this.standartRadius = standartRadius;
         this.maps = maps;
+        this.textLabel = label;
+        HandlerMouseEvents.alertNoTickets = new Alert(Alert.AlertType.INFORMATION);
+        HandlerMouseEvents.alertNoTickets.setHeaderText("Sem Passagens!!! :(");
     }
     /**
      * O método handle e nativo da interface HandlerEvent, então é há partir deste
@@ -60,12 +68,31 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
         double[] coordAproximate = this.approximateCoordinates(event.getSceneX(), event.getSceneY());
         int transformada =(int) this.transformacaoLinear(coordAproximate[0], coordAproximate[1], lenLine);
         if(HandlerMouseEvents.iterador == 0){
-            System.err.println(HandlerMouseEvents.lastStation+"----"+transformada);
-            System.out.println(this.maps.movimentation(HandlerMouseEvents.lastStation, transformada));
             this.movimentation(transformada);
         }
         else if(this.maps.movimentation(HandlerMouseEvents.lastStation, transformada)){
             this.movimentation(transformada);
+            int[] plays = this.maps.getPlays();
+            textLabel.setText("passagens Taxi: "+plays[0]+"\n"
+                    + "passagens trem: "+plays[1]+"\n"+
+                    "passagens ônibus: "+plays[2]);
+            //this.showAdequateMessage(plays);
+        }
+    }
+    public void showAdequateMessage(int[] plays){
+        final int INDEXTAXI = 0, INDEXTRAIN = 1, INDEXBUS = 2;
+        if(plays[INDEXTAXI]==0){
+            HandlerMouseEvents.alertNoTickets.setContentText("Você está sem passagens de TÁXI!!!");
+            HandlerMouseEvents.alertNoTickets.showAndWait();
+        }
+        else if(plays[INDEXTRAIN] == 0){
+            HandlerMouseEvents.alertNoTickets.setContentText("Você está sem passagens de TREM!!!");
+            HandlerMouseEvents.alertNoTickets.showAndWait(); 
+        }
+        
+        else if(plays[INDEXBUS] == 0){
+            HandlerMouseEvents.alertNoTickets.setContentText("Você está sem passagens de ÔNIBUS!!!");
+            HandlerMouseEvents.alertNoTickets.showAndWait();
         }
     }
     /**
@@ -146,5 +173,8 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
                     break;
             }
         }
+    }
+    public void AtualizaListView(int vertice){
+        
     }
 }

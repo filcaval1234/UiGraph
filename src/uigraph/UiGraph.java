@@ -13,14 +13,20 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import handleEvents.HandlerMouseEvents;
+import java.io.IOException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.shape.Polyline;
+import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ListView;
 
 /**
  *
  * @author fc.corporation
  */
 public class UiGraph extends Application {
-    private Circle stationall;
+    private Circle allStation;
     private final Group GROUPSTATION;
     private final Group GROUPSTREET;
     private final Group GROUPSTATIONBUS;
@@ -28,20 +34,31 @@ public class UiGraph extends Application {
     private final int RADIUS = 5; //raio do circulo que representa a estação
     private static int QUANTIINLINE; // quantidade de estações na mesma linha
     private static int QUANTSTATION; // quantidade de estações no total
+    private static final int STROKEWIDTH = 1;
     private Maps maps;
     private HandlerMouseEvents handlerMouseEvents;
     private final Color[] standartColorsOfStation;
+    private Label genericsLabel;
+    private Group groupLabel;
+    private ListView listOfJogadas;
+    private Client client;
     
     /**
      * O construtor da classe não recebe nenhum argumento e instancia os objetos
      * e seta o mapa de acordo com as constantes.
      */
-    public UiGraph(){
+    public UiGraph() throws IOException, ClassNotFoundException{
+        this.client = new Client("192.168.31.5", 7002);
         this.standartColorsOfStation = new Color[]{Color.BLUE, Color.BLACK, Color.GREEN};
         this.GROUPSTATION = new Group();
         this.GROUPSTREET = new Group();
         this.GROUPSTATIONBUS = new Group();
         this.GROUPSTATIONTRAIN = new Group();
+        this.genericsLabel = new Label();
+        this.genericsLabel.setTranslateX(1500);
+        this.genericsLabel.setTranslateY(20);
+        this.groupLabel = new Group();
+        this.listOfJogadas = new ListView();
     }
     /**
      * O método createStation cria os Nodes que são circulos que representam as 
@@ -51,23 +68,24 @@ public class UiGraph extends Application {
      * @param distancia distancia em pixels entra cada estação no eixo x
      * @param quantInLine quantidade de estações na mesma linha
      */
-    public void createStation(int quant, int distancia, int quantInLine){
+    public void createStation(int quant, int distancia, int quantInLine) throws IOException, ClassNotFoundException{
         UiGraph.QUANTIINLINE = quantInLine;
         UiGraph.QUANTSTATION = quant;
         this.maps = new Maps(UiGraph.QUANTSTATION, UiGraph.QUANTIINLINE);
+        //this.maps = (Maps) this.client.receive();
         int j = 1;
         int x = distancia;
         int y = distancia;
         for(int i=0;i < quant;i++){
-            this.stationall = new Circle(RADIUS);
-            this.stationall.setTranslateX(x);
-            this.stationall.setTranslateY(y);
-            this.stationall.setOnMouseClicked(new HandlerMouseEvents(
+            this.allStation = new Circle(RADIUS);
+            this.allStation.setTranslateX(x);
+            this.allStation.setTranslateY(y);
+            this.allStation.setOnMouseClicked(new HandlerMouseEvents(
                     distancia, distancia, this.GROUPSTATION, quantInLine,
-                    this.standartColorsOfStation, UiGraph.QUANTSTATION, this.RADIUS, this.maps));
+                    this.standartColorsOfStation, UiGraph.QUANTSTATION, this.RADIUS, this.maps, this.genericsLabel));
             this.createStreets(i, x, y, distancia);
             x += distancia;
-            this.GROUPSTATION.getChildren().add(this.stationall);
+            this.GROUPSTATION.getChildren().add(this.allStation);
             if(i == (quantInLine*j)-1){
                 y+= distancia;
                 x=distancia;
@@ -89,13 +107,13 @@ public class UiGraph extends Application {
         int[] vertces = this.maps.possibleEges(vertce);
             if(this.maps.thereEdge(vertce, vertces[0])){
                 tempLine = new Line(starts_x+this.RADIUS, starts_Y, starts_x+distance-this.RADIUS, starts_Y);
-                tempLine.setStroke(color);
+                tempLine.setStrokeWidth(UiGraph.STROKEWIDTH);
                 tempLine.setMouseTransparent(true);
                 this.GROUPSTREET.getChildren().add(tempLine);
             }
             if(this.maps.thereEdge(vertce, vertces[1])){
                 tempLine = new Line(starts_x, starts_Y+this.RADIUS, starts_x, starts_Y + distance-this.RADIUS);
-                tempLine.setStroke(color);
+                tempLine.setStrokeWidth(UiGraph.STROKEWIDTH);
                 tempLine.setMouseTransparent(true);
                 this.GROUPSTREET.getChildren().add(tempLine);
             }
@@ -157,11 +175,23 @@ public class UiGraph extends Application {
                         xCoordDestiny, yCoordDestiny});
                     line.setMouseTransparent(true);
                     line.setStroke(genericColor);
+                    line.setStrokeWidth(UiGraph.STROKEWIDTH);
                     genericGroup.getChildren().add(line);
                     iterador++;
                 }
             }
         }
+    }
+    public void setAllLabels(){
+        ObservableList<String> itens = FXCollections.observableArrayList("jogadas", "exemplo",
+                "teste2", "teste3","teste4", "teste5");
+        this.listOfJogadas.setItems(itens);
+        this.listOfJogadas.setPrefWidth(200);
+        this.listOfJogadas.setPrefHeight(70);
+        this.listOfJogadas.setTranslateX(1450);
+        this.listOfJogadas.setTranslateY(80);
+        this.groupLabel.getChildren().add(this.genericsLabel);
+        this.groupLabel.getChildren().add(this.listOfJogadas);
     }
     /**
      * O método start é implementado obrigatoriamente por causa da herança
@@ -169,14 +199,17 @@ public class UiGraph extends Application {
      * @param primaryStage não faço idea do que é isso DATTEBAYO!!
      */
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage){
+        try{
         this.createStation(200, 70, 20);
+        }catch(Exception ex){}
         Group allGroup = new Group();
         this.createstationBusTaxi();
         this.createStationTrain();
-        //allGroup.getChildren().add(this.GROUPSTATION);
+        this.setAllLabels();
+        //allGroup.getChildren().add(this.genericsLabel);
         allGroup.getChildren().addAll(this.GROUPSTATION,this.GROUPSTREET, 
-                this.GROUPSTATIONBUS, this.GROUPSTATIONTRAIN);
+                this.GROUPSTATIONBUS, this.GROUPSTATIONTRAIN, this.groupLabel);
         Scene scene = new Scene(allGroup);
         primaryStage.setTitle("UiGraph");
         primaryStage.setScene(scene);

@@ -3,13 +3,16 @@
  * mapas gerados aleatoriamente para o jogo Interpool-Crow.
  */
 package uigraph;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 /**
  *
  * @author fc.corporation
  */
-public class Maps {
+@SuppressWarnings("serial")
+public class Maps implements Serializable{
+    static final long serialVersionUID = 3195971066458625961L;
     private int[][] adjacenciesMatrix;
     private int[][] stationBusTaxi;
     private int[][] stationTrainBus;
@@ -22,6 +25,7 @@ public class Maps {
     private final int SIZE;
     private final int quantInLine;
     private int iterador;
+    private int[] plays;
     
     /**
      * O contrutor da classe recebe dois argumentos, daí instancia os objetos
@@ -42,6 +46,7 @@ public class Maps {
         this.COORD = new Random();
         this.SIZE = adjacenciesMatrix.length;
         this.setAdjacencieMatrix(quantInLine);
+        this.plays = new int[]{5,10,8};
     }
     /**
      * O método setAdjacencieMatrix inicializa todas as matrizes de adjacencias
@@ -381,14 +386,21 @@ public class Maps {
         return result;
     }
     public boolean movimentation(int verticePartida, int verticeChegada){
+        final int INDEXTAXI = 0, INDEXTRAIN = 1, INDEXBUS = 2;
         boolean state = false;
-        if(this.genericMovimentation(verticePartida, verticeChegada, this.adjacenciesMatrix)){
+        if(this.genericMovimentation(verticePartida, verticeChegada, this.adjacenciesMatrix) &&
+                this.plays[INDEXTAXI] > 0){
+            this.plays[INDEXTAXI]-=1;
             state = true;
         }
-        else if(this.genericMovimentation(verticePartida, verticeChegada, this.stationTrainBus)){
+        else if(this.genericMovimentation(verticePartida, verticeChegada, this.stationTrainBus) &&
+                this.plays[INDEXTRAIN] > 0){
+            this.plays[INDEXTRAIN]-=1;
             state = true;
         }
-        else if (this.genericMovimentation(verticePartida, verticeChegada, this.stationBusTaxi)){
+        else if (this.genericMovimentation(verticePartida, verticeChegada, this.stationBusTaxi) && 
+                this.plays[INDEXBUS] > 0){
+            this.plays[INDEXBUS]-=1;
             state = true;
         }
         return state;
@@ -399,6 +411,16 @@ public class Maps {
             state = this.thereEdge(verticePartida, verticeChegada, adjacencieMatriz);
         else
             state = this.thereEdge(verticeChegada, verticePartida, adjacencieMatriz);
+        return state;
+    }
+    public int[] getPlays(){
+        return this.plays;
+    }
+    public boolean inSameStation(int posJog1, int posJog2){
+        boolean state = false;
+        if(posJog1 == posJog2){
+            state = true;
+        }
         return state;
     }
 }
