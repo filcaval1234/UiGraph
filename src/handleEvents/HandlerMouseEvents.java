@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import uigraph.Maps;
 import uigraph.Client;
-import uigraph.Teste;
+import uigraph.Played;
 /**
  *
  * @author fc.corporation
@@ -73,10 +73,9 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
     public void handle(MouseEvent event) {
         double[] coordAproximate = this.approximateCoordinates(event.getSceneX(), event.getSceneY());
         int transformada =(int) this.transformacaoLinear(coordAproximate[0], coordAproximate[1], lenLine);
-        Serializable teste2 = new Teste(transformada);
-        try{
-            this.client.send(transformada);
-        }catch(Exception ex){}
+        //------------------ver isto-------------------------------
+        Serializable played = new Played(transformada);
+        //----------------------------------------------------------
         if(HandlerMouseEvents.iterador == 0){
             this.movimentation(transformada);
         }
@@ -86,11 +85,14 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
             textLabel.setText("passagens Taxi: "+plays[0]+"\n"
                     + "passagens trem: "+plays[1]+"\n"+
                     "passagens ônibus: "+plays[2]);
+            //--------------e isto---------------------------------
+            try{
+                this.client.send(transformada);
+            }catch(Exception ex){}
+            //-----------------------------------------------------
             //this.showAdequateMessage(plays);
         }
-        try{
-            this.client.send(teste2);
-        }catch(Exception ex){}
+        
     }
     //analisar esta função!!!!! DATTEBAYO!!!
     public void showAdequateMessage(int[] plays){

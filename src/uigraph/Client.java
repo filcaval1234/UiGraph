@@ -15,7 +15,7 @@ public class Client {
     public Client(String IP, int PORT) throws IOException, ClassNotFoundException {
         this.client = new Socket(IP, PORT); 
     }
-    public void send(Serializable object) throws IOException, ClassNotFoundException {
+    public void send(Object object) throws IOException, ClassNotFoundException {
         ObjectOutputStream output = new ObjectOutputStream(client.getOutputStream());
         output.flush(); 
         output.writeObject(object); 

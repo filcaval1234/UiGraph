@@ -12,10 +12,13 @@ import java.io.Serializable;
  * @author fc.corporation
  */
 @SuppressWarnings("serial")
-public class Teste implements Serializable{
-    static final long serialVersionUID = 3195971066458625965L;
-    private int teste123;
-    public Teste(int teste){
-        this.teste123 = teste;
+public class Played implements Serializable{
+    static final long serialVersionUID = 123456;
+    private Integer posicao;
+    public Played(Integer posicao){
+        this.posicao = posicao;
+    }
+    public String toString(){
+        return this.posicao+"";
     }
 }
