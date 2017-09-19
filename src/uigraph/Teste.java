@@ -13,9 +13,9 @@ import java.io.Serializable;
  */
 @SuppressWarnings("serial")
 public class Teste implements Serializable{
-        static final long serialVersionUID = 3195971066458625965L;
-        private int teste123;
-        public Teste(int teste){
-            this.teste123 = teste;
-        }
+    static final long serialVersionUID = 3195971066458625965L;
+    private int teste123;
+    public Teste(int teste){
+        this.teste123 = teste;
+    }
 }

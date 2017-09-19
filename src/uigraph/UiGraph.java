@@ -48,7 +48,7 @@ public class UiGraph extends Application {
      * e seta o mapa de acordo com as constantes.
      */
     public UiGraph() throws IOException, ClassNotFoundException{
-        this.client = new Client("192.168.31.6", 7002);
+        this.client = new Client("192.168.31.4", 7002);
         this.standartColorsOfStation = new Color[]{Color.BLUE, Color.BLACK, Color.GREEN};
         this.GROUPSTATION = new Group();
         this.GROUPSTREET = new Group();
