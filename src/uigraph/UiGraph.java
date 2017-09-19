@@ -48,7 +48,7 @@ public class UiGraph extends Application {
      * e seta o mapa de acordo com as constantes.
      */
     public UiGraph() throws IOException, ClassNotFoundException{
-        this.client = new Client("192.168.31.5", 7002);
+        this.client = new Client("192.168.31.6", 7002);
         this.standartColorsOfStation = new Color[]{Color.BLUE, Color.BLACK, Color.GREEN};
         this.GROUPSTATION = new Group();
         this.GROUPSTREET = new Group();
@@ -82,7 +82,8 @@ public class UiGraph extends Application {
             this.allStation.setTranslateY(y);
             this.allStation.setOnMouseClicked(new HandlerMouseEvents(
                     distancia, distancia, this.GROUPSTATION, quantInLine,
-                    this.standartColorsOfStation, UiGraph.QUANTSTATION, this.RADIUS, this.maps, this.genericsLabel));
+                    this.standartColorsOfStation, UiGraph.QUANTSTATION, 
+                    this.RADIUS, this.maps, this.genericsLabel, this.client));
             this.createStreets(i, x, y, distancia);
             x += distancia;
             this.GROUPSTATION.getChildren().add(this.allStation);
@@ -214,6 +215,17 @@ public class UiGraph extends Application {
         primaryStage.setTitle("UiGraph");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+    public void showResearcher(){
+        ArrayList<Integer> researcher = new ArrayList<>();
+        final int RADIUS = 8;
+        try{
+            researcher = (ArrayList<Integer>) this.client.receive();
+        }catch(Exception ex){}
+        for(Integer position: researcher){
+            Circle tempCircle = (Circle) this.GROUPSTATION.getChildren().get(position);
+            tempCircle.setRadius(RADIUS);
+        }
     }
     /**
      * @param args the command line arguments

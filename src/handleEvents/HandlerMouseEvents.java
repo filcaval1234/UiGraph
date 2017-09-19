@@ -4,6 +4,8 @@
  * EventHandler de javafx.event.
  */
 package handleEvents;
+import java.io.Serializable;
+import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Alert;
@@ -12,6 +14,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import uigraph.Maps;
+import uigraph.Client;
+import uigraph.Teste;
 /**
  *
  * @author fc.corporation
@@ -30,6 +34,7 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
     private static int[] jogadas;
     private Label textLabel;
     private static Alert alertNoTickets;
+    private Client client;
     
     /**
      * O contrutor da classe que recebe argumentos necessarios para inicializar
@@ -44,7 +49,8 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
      * @param maps referencia ao mapa que foi criado em UiGraph
      */
     public HandlerMouseEvents(int lengthX, int lengthY, Group tempGroup, int lenLine,
-            Color[] colorsOfStations, int lenGroup, int standartRadius, Maps maps, Label label){
+            Color[] colorsOfStations, int lenGroup, int standartRadius, Maps maps, Label label, Client client){
+        this.client = client;
         this.tempGroup = tempGroup;
         this.lengthX = lengthX;
         this.lengthY = lengthY;
@@ -67,6 +73,10 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
     public void handle(MouseEvent event) {
         double[] coordAproximate = this.approximateCoordinates(event.getSceneX(), event.getSceneY());
         int transformada =(int) this.transformacaoLinear(coordAproximate[0], coordAproximate[1], lenLine);
+        Serializable teste2 = new Teste(transformada);
+        try{
+            this.client.send(transformada);
+        }catch(Exception ex){}
         if(HandlerMouseEvents.iterador == 0){
             this.movimentation(transformada);
         }
@@ -78,7 +88,11 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
                     "passagens ônibus: "+plays[2]);
             //this.showAdequateMessage(plays);
         }
+        try{
+            this.client.send(teste2);
+        }catch(Exception ex){}
     }
+    //analisar esta função!!!!! DATTEBAYO!!!
     public void showAdequateMessage(int[] plays){
         final int INDEXTAXI = 0, INDEXTRAIN = 1, INDEXBUS = 2;
         if(plays[INDEXTAXI]==0){
@@ -174,6 +188,7 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
             }
         }
     }
+    
     public void AtualizaListView(int vertice){
         
     }
