@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import uigraph.Maps;
 import uigraph.Client;
-import uigraph.Played;
+import uigraph.ReceiveThread;
 /**
  *
  * @author fc.corporation
@@ -35,6 +35,7 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
     private Label textLabel;
     private static Alert alertNoTickets;
     private Client client;
+    private static Integer[] playeds;
     
     /**
      * O contrutor da classe que recebe argumentos necessarios para inicializar
@@ -60,6 +61,7 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
         this.standartRadius = standartRadius;
         this.maps = maps;
         this.textLabel = label;
+        //HandlerMouseEvents.playeds = new ArrayList<Integer>();
         HandlerMouseEvents.alertNoTickets = new Alert(Alert.AlertType.INFORMATION);
         HandlerMouseEvents.alertNoTickets.setHeaderText("Sem Passagens!!! :(");
     }
@@ -71,10 +73,12 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
      */
     @Override
     public void handle(MouseEvent event) {
+        Thread recerverThread = new Thread(new ReceiveThread(this.client, HandlerMouseEvents.playeds));
+        recerverThread.start();
         double[] coordAproximate = this.approximateCoordinates(event.getSceneX(), event.getSceneY());
         int transformada =(int) this.transformacaoLinear(coordAproximate[0], coordAproximate[1], lenLine);
         //------------------ver isto-------------------------------
-        Serializable played = new Played(transformada);
+        
         //----------------------------------------------------------
         if(HandlerMouseEvents.iterador == 0){
             this.movimentation(transformada);
@@ -190,7 +194,17 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
             }
         }
     }
-    
+    public void showResearcher(){
+        ArrayList<Integer> researcher = new ArrayList<>();
+        final int RADIUS = 8;
+        try{
+            researcher = (ArrayList<Integer>) this.client.receive();
+        }catch(Exception ex){}
+        for(Integer position: researcher){
+            Circle tempCircle = (Circle) this.tempGroup.getChildren().get(position);
+            tempCircle.setRadius(RADIUS);
+        }
+    }
     public void AtualizaListView(int vertice){
         
     }

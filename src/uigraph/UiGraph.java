@@ -216,17 +216,6 @@ public class UiGraph extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    public void showResearcher(){
-        ArrayList<Integer> researcher = new ArrayList<>();
-        final int RADIUS = 8;
-        try{
-            researcher = (ArrayList<Integer>) this.client.receive();
-        }catch(Exception ex){}
-        for(Integer position: researcher){
-            Circle tempCircle = (Circle) this.GROUPSTATION.getChildren().get(position);
-            tempCircle.setRadius(RADIUS);
-        }
-    }
     /**
      * @param args the command line arguments
      */
