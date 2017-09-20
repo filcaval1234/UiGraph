@@ -48,7 +48,7 @@ public class UiGraph extends Application {
      * e seta o mapa de acordo com as constantes.
      */
     public UiGraph() throws IOException, ClassNotFoundException{
-        this.client = new Client("192.168.31.4", 7002);
+        this.client = new Client("192.168.31.7", 7002);
         this.standartColorsOfStation = new Color[]{Color.BLUE, Color.BLACK, Color.GREEN};
         this.GROUPSTATION = new Group();
         this.GROUPSTREET = new Group();
@@ -71,8 +71,8 @@ public class UiGraph extends Application {
     public void createStation(int quant, int distancia, int quantInLine) throws IOException, ClassNotFoundException{
         UiGraph.QUANTIINLINE = quantInLine;
         UiGraph.QUANTSTATION = quant;
-        this.maps = new Maps(UiGraph.QUANTSTATION, UiGraph.QUANTIINLINE);
-        //this.maps = (Maps) this.client.receive();
+        //this.maps = new Maps(UiGraph.QUANTSTATION, UiGraph.QUANTIINLINE);
+        this.maps = (Maps) this.client.receive();
         int j = 1;
         int x = distancia;
         int y = distancia;
@@ -202,7 +202,7 @@ public class UiGraph extends Application {
     @Override
     public void start(Stage primaryStage){
         try{
-        this.createStation(200, 70, 20);
+        this.createStation(200, 50, 20);
         }catch(Exception ex){}
         Group allGroup = new Group();
         this.createstationBusTaxi();

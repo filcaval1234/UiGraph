@@ -87,7 +87,7 @@ public class HandlerMouseEvents implements EventHandler<MouseEvent>{
                     "passagens ônibus: "+plays[2]);
             //--------------e isto---------------------------------
             try{
-                this.client.send(transformada);
+                this.client.send((Integer)transformada);
             }catch(Exception ex){}
             //-----------------------------------------------------
             //this.showAdequateMessage(plays);
